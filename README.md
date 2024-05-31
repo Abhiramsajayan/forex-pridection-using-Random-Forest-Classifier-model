@@ -26,3 +26,5 @@ The accuracy of the model is printed to the console, along with a classification
 To change the currency pair or the date range of the historical data, modify the currency_pair and start/end parameters in the main.py file.
 To modify the features used for prediction, update the features list in the main.py file.
 To experiment with different machine learning models or hyperparameters, edit the model initialization and hyperparameter tuning sections in the main.py file.
+
+Feel free to customize <3
