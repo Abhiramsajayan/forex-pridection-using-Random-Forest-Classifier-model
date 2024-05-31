@@ -1,0 +1,65 @@
+import pandas as pd
+import yfinance as yf
+import pandas_ta as ta
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+
+# Download historical forex data
+currency_pair = "EURUSD=X"
+data = yf.download(currency_pair, start="1990-01-01", end="2024-05-31")
+data.dropna(inplace=True)
+data["Date"] = data.index
+data.reset_index(drop=True, inplace=True)
+
+# Add more features
+data.ta.rsi(append=True)
+data.ta.macd(append=True)
+data.ta.bbands(append=True)
+data.ta.adx(append=True)
+data.ta.cci(length=20, append=True)
+data.ta.stoch(append=True)
+
+# Use a different target variable
+data["target"] = data["Close"].pct_change(5) > 0
+
+# Prepare the data for modeling
+features = [
+    "RSI_14",
+    "MACD_12_26_9",
+    "BBL_5_2.0",
+    "ADX_14",
+    "CCI_20_0.015",
+    "STOCHk_14_3_3",
+    "Close",
+]
+X = data[features].dropna()
+y = data["target"].loc[X.index]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+
+# Use a different model
+model = RandomForestClassifier()
+
+# Hyperparameter tuning
+param_grid = {
+    "n_estimators": [100, 200, 300],
+    "max_depth": [None, 10, 20, 30],
+    "min_samples_split": [2, 5, 10],
+    "min_samples_leaf": [1, 2, 4],
+}
+grid_search = GridSearchCV(model, param_grid, cv=5)
+grid_search.fit(X_train, y_train)
+model = grid_search.best_estimator_
+
+# Train the model
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)
+
+# Model evaluation
+accuracy = accuracy_score(y_test, predictions)
+print(f"Accuracy: {accuracy}")
+report = classification_report(y_test, predictions)
+print(report)
