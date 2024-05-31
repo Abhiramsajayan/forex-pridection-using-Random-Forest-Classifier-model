@@ -5,18 +5,18 @@ This repository contains Python code for predicting forex trading signals using 
 # Installation
 Clone the repository:
 
-sh
+
 
 Copy code
-git clone https://github.com/your-username/forex-trading-predictor.git
+   git clone https://github.com/your-username/forex-trading-predictor.git
 Install the required Python libraries:
 sh
 Copy code
-pip install -r requirements.txt
+   pip install -r requirements.txt
 # Usage
 Run the main.py file to train the model and make predictions.
 
-sh
+
 
 Copy code
 python main.py
